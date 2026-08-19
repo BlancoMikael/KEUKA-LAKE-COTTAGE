@@ -655,4 +655,167 @@ navlinks.querySelectorAll("a").forEach(a=>a.addEventListener("click",()=>navlink
 /* Initialize booking calendar */
 renderCalendar();
 syncBookingUI();
-</script></body></html>
+</script>
+  <script type="module">
+  // Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+    signOut,
+    onAuthStateChanged
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    getDocs,
+    doc,
+    updateDoc,
+    deleteDoc,
+    query,
+    orderBy
+  } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+
+  // ==============================
+  // YOUR FIREBASE CONFIG
+  // ==============================
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyA2CxmY7kQ9qbjptCu8avjYFNyDA6-G0X4",
+    authDomain: "keuka-lake-cottage.firebaseapp.com",
+    projectId: "keuka-lake-cottage",
+    storageBucket: "keuka-lake-cottage.firebasestorage.app",
+    messagingSenderId: "410127727479",
+    appId: "1:410127727479:web:315636dccffa133c6aff72",
+    measurementId: "G-0XB9HGWNQE"
+  };
+
+
+  // ==============================
+  // INITIALIZE FIREBASE
+  // ==============================
+
+  const app = initializeApp(firebaseConfig);
+
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+
+  const googleProvider = new GoogleAuthProvider();
+
+
+  // ==============================
+  // GOOGLE LOGIN
+  // ==============================
+
+  window.loginWithGoogle = async function () {
+
+    try {
+
+      const result = await signInWithPopup(auth, googleProvider);
+
+      const user = result.user;
+
+      console.log("Logged in:", user.displayName);
+      console.log("Email:", user.email);
+
+      alert(`Welcome, ${user.displayName}!`);
+
+    } catch (error) {
+
+      console.error("Login error:", error);
+
+      alert("Google login failed. Please try again.");
+
+    }
+
+  };
+
+
+  // ==============================
+  // LOGOUT
+  // ==============================
+
+  window.logoutUser = async function () {
+
+    try {
+
+      await signOut(auth);
+
+      alert("You have been logged out.");
+
+    } catch (error) {
+
+      console.error("Logout error:", error);
+
+    }
+
+  };
+
+
+  // ==============================
+  // CHECK LOGIN STATUS
+  // ==============================
+
+  onAuthStateChanged(auth, (user) => {
+
+    if (user) {
+
+      console.log("User is logged in:", user.email);
+
+      // You can update your website UI here
+      // Example:
+      // document.getElementById("loginButton").style.display = "none";
+
+    } else {
+
+      console.log("No user is logged in.");
+
+      // Example:
+      // document.getElementById("logoutButton").style.display = "none";
+
+    }
+
+  });
+
+
+  // ==============================
+  // FIRESTORE
+  // ==============================
+
+  // Example: create a booking
+  window.createBooking = async function (bookingData) {
+
+    try {
+
+      const docRef = await addDoc(
+        collection(db, "bookings"),
+        bookingData
+      );
+
+      console.log("Booking created:", docRef.id);
+
+      return docRef.id;
+
+    } catch (error) {
+
+      console.error("Error creating booking:", error);
+
+      throw error;
+
+    }
+
+  };
+
+
+  // Make Firebase available to your other JavaScript if needed
+  window.firebaseAuth = auth;
+  window.firebaseDB = db;
+
+</script>
+
+</body></html>
