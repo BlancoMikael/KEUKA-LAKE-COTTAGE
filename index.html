@@ -109,8 +109,30 @@ body.dark-mode .day.unavailable{background:#263438;color:#687a7e}
   .day{min-height:42px;font-size:.82rem}
   .calendar-legend{gap:8px}
 }
+  .btn-owner{
+    background:#ffffff;
+    color:#18333b;
+    padding:10px 16px;
+    border-radius:999px;
+    font-size:.85rem;
+    font-weight:700;
+    text-decoration:none;
+    transition:.25s;
+}
+
+.btn-owner:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(0,0,0,.15);
+}
+
+body.dark-mode .btn-owner{
+    background:#77b7bd;
+    color:#10272c;
+}
 </style></head><body>
-<nav class="nav" id="nav"><a class="brand" href="#">Keuka Lake Cottage</a><div class="navlinks"><a href="#cottage">Cottage</a><a href="#details">Amenities</a><a href="#gallery">Photos</a><a href="#location">Area</a><a href="#booking">Book</a></div><div class="nav-actions"><button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle night mode">☾</button><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button></div></nav>
+<nav class="nav" id="nav"><a class="brand" href="#">Keuka Lake Cottage</a><div class="navlinks"><a href="#cottage">Cottage</a><a href="#details">Amenities</a><a href="#gallery">Photos</a><a href="#location">Area</a><a href="#booking">Book</a></div><div class="nav-actions"><button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle night mode">☾</button><button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false">☰</button><a href="#" class="btn-owner" onclick="ownerLogin(event)">
+    Owner Login
+  </a></div></nav>
 <header class="hero"><div class="hero-content"><div class="eyebrow">Keuka Lake · Finger Lakes · New York</div><h1>New Lakefront Cottage</h1><p>150 feet of private Keuka Lake frontage, a new dock, and a peaceful place to slow down and enjoy the lake.</p><a class="btn primary" href="#booking">Ask About Your Stay</a></div></header>
 <div class="stats"><div class="stat"><strong>150'</strong><span>Private lake frontage</span></div><div class="stat"><strong>6</strong><span>Guests</span></div><div class="stat"><strong>Private</strong><span>New dock</span></div></div>
 <section id="cottage"><div class="split"><img src="images/front view 1.jpg" alt="Keuka Lake cottage"><div class="copy"><div class="eyebrow">A place by the water</div><h2>Wake up where the lake begins.</h2><p>Welcome to a special lakefront cottage on Keuka Lake. This home is designed for guests who want time together, fresh air, beautiful water views, and the simple pleasure of being right on the lake.</p><p>With <strong>150 feet of private Keuka Lake frontage</strong>, a <strong>new dock</strong>, and accommodations for <strong>up to six guests</strong>, the cottage is an inviting base for a relaxed Finger Lakes getaway.</p><a class="btn dark" href="#gallery">Explore the photos</a></div></div></section>
@@ -817,5 +839,48 @@ syncBookingUI();
   window.firebaseDB = db;
 
 </script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
+const firebaseConfig = {
+  apiKey: "AIzaSyA2CxmY7kQ9qbjptCu8avjYFNyDA6-G0X4",
+  authDomain: "keuka-lake-cottage.firebaseapp.com",
+  projectId: "keuka-lake-cottage",
+  storageBucket: "keuka-lake-cottage.firebasestorage.app",
+  messagingSenderId: "410127727479",
+  appId: "1:410127727479:web:315636dccffa133c6aff72"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const provider = new GoogleAuthProvider();
+
+window.ownerLogin = async function(e){
+  e.preventDefault();
+
+  try{
+    const result = await signInWithPopup(auth, provider);
+    const email = result.user.email;
+
+    // CHANGE THIS TO YOUR GRANDMA'S GMAIL
+    const ownerEmail = "michaelblanco54321@gmail.com";
+
+    if(email === ownerEmail){
+      window.location.href = "admin.html";
+    }else{
+      alert("This account is not authorized.");
+      await auth.signOut();
+    }
+
+  }catch(err){
+    console.error(err);
+    alert("Google sign-in failed.");
+  }
+}
+</script>
 </body></html>
